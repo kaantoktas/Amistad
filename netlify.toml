@@ -6,8 +6,10 @@
   # Netlify Functions'ların kaynak kodu dizini
   functions = "functions"
 
+# Fonksiyonlar için genel ayarlar
 [functions]
   # Fonksiyonlarınız için Node.js çalışma zamanı versiyonu
+  # Bu, fonksiyonların hangi Node.js versiyonunda çalışacağını belirtir.
   node_bundler = "esbuild" # Daha hızlı derleme için önerilir
   node_version = "20" # Veya kullandığınız Node.js versiyonu (örn: 18, 20)
 
