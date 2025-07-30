@@ -1,0 +1,20 @@
+# Netlify yapılandırma dosyası
+
+[build]
+  # Sitenizin kök dizini (HTML, CSS, JS dosyalarınızın bulunduğu yer)
+  publish = "."
+  # Netlify Functions'ların kaynak kodu dizini
+  functions = "functions"
+
+[functions]
+  # Fonksiyonlarınız için Node.js çalışma zamanı versiyonu
+  node_bundler = "esbuild" # Daha hızlı derleme için önerilir
+  node_version = "20" # Veya kullandığınız Node.js versiyonu (örn: 18, 20)
+
+# Yönlendirmeler (isteğe bağlı, ama faydalı olabilir)
+# Örneğin, tarayıcıdan /api/* isteklerini fonksiyonlara yönlendirmek için:
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+  force = true # Her zaman bu yönlendirmeyi kullan

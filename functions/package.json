@@ -1,0 +1,10 @@
+{
+  "name": "netlify-functions",
+  "version": "1.0.0",
+  "description": "Netlify Functions for Media Gallery",
+  "main": "upload.js",
+  "dependencies": {
+    "cloudinary": "^1.41.0",
+    "dotenv": "^16.4.5"
+  }
+}

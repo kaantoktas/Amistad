@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ana Sayfa | Medya Galerisi</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="logo"><strong>Medya</strong> Galerisi</div>
+      <nav>
+        <a href="#home" class="nav-link active">Ana Sayfa</a>
+        <a href="#gallery" class="nav-link">Galeri</a>
+        <a href="#about" class="nav-link">Hakkımızda</a>
+      </nav>
+    </header>
+
+    <section id="home" class="hero content-section">
+      <h1>Anılarını Estetikle Sakla</h1>
+      <p>
+        Medya Galerisi ile fotoğraflarını ve videolarını güvenli, modern ve sade
+        bir arayüzde saklayabilir ve paylaşabilirsin.
+      </p>
+      <a href="#gallery">Galeriye Git</a>
+    </section>
+
+    <section id="gallery" class="content-section">
+      <h1>Medya Galerimiz</h1>
+      <p>Görsel hikayelerimizi keşfedin.</p>
+
+      <!-- Fotoğraf Yükleme Alanı Başlangıcı - Buraya taşındı -->
+      <div class="upload-section">
+        <h2>Fotoğraf Yükle</h2>
+        <form id="uploadForm" class="upload-form">
+          <input
+            type="file"
+            id="photoInput"
+            name="photo"
+            accept="image/*"
+            required
+          />
+          <button type="submit" id="uploadButton">Yükle</button>
+        </form>
+        <div id="uploadMessage" class="message"></div>
+        <div
+          id="loadingIndicator"
+          class="loading-indicator"
+          style="display: none"
+        >
+          Yükleniyor...
+        </div>
+      </div>
+      <!-- Fotoğraf Yükleme Alanı Sonu -->
+
+      <div id="galleryGrid" class="gallery-grid">
+        <!-- Görseller buraya dinamik olarak yüklenecek -->
+        <!-- Mevcut placeholder görselleri kaldırıldı, çünkü artık dinamik yüklenecekler -->
+      </div>
+      <a href="#about">Hakkımızda'ya Git</a>
+    </section>
+
+    <section id="about" class="content-section">
+      <h1>Biz Kimiz?</h1>
+      <p>
+        Medya Galerisi, anılarınızı en güzel şekilde saklamanız ve paylaşmanız
+        için tutkuyla çalışan bir ekibin ürünüdür. Amacımız, kullanıcılarımıza
+        basit, güvenli ve estetik bir medya saklama deneyimi sunmaktır.
+      </p>
+      <p>
+        Teknolojiyi kullanarak görsellerinize değer katıyor, onları her zaman
+        ulaşılabilir kılıyoruz. Hikayelerinizi bizimle paylaşın, geleceğe
+        taşıyalım.
+      </p>
+      <a href="#home">Ana Sayfaya Dön</a>
+    </section>
+
+    <footer>&copy; 2025 Medya Galerisi. Tüm hakları saklıdır.</footer>
+
+    <!-- Tüm JavaScript işlevselliği artık script.js içinde olacak -->
+    <script src="script.js"></script>
+  </body>
+</html>
