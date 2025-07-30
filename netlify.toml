@@ -5,13 +5,16 @@
   publish = "."
   # Netlify Functions'ların kaynak kodu dizini
   functions = "functions"
+  # Node.js versiyonunu ortam değişkeni olarak ayarla
+  environment = { NODE_VERSION = "20" } # Veya kullandığınız Node.js versiyonu (örn: 18, 20)
 
 # Fonksiyonlar için genel ayarlar
 [functions]
   # Fonksiyonlarınız için Node.js çalışma zamanı versiyonu
   # Bu, fonksiyonların hangi Node.js versiyonunda çalışacağını belirtir.
   node_bundler = "esbuild" # Daha hızlı derleme için önerilir
-  node_version = "20" # Veya kullandığınız Node.js versiyonu (örn: 18, 20)
+  # node_version = "20" # Bu satır yukarıdaki environment değişkenine taşındığı için kaldırıldı
+
 
 # Yönlendirmeler (isteğe bağlı, ama faydalı olabilir)
 # Örneğin, tarayıcıdan /api/* isteklerini fonksiyonlara yönlendirmek için:
