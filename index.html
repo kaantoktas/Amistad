@@ -31,17 +31,19 @@
 
     <section id="gallery" class="content-section">
       <h1>Medya Galerisi</h1>
-      
+      <p>Görsel hikayelerimizi keşfedin.</p>
 
-      <!-- Fotoğraf Yükleme Alanı Başlangıcı - Buraya taşındı -->
-      <div class="upload-section">
+      <!-- Fotoğraf Yükleme Alanı Başlangıcı -->
+      <div id="uploadSection" class="upload-section">
         <h2>Fotoğraf veya Video Yükle</h2>
         <form id="uploadForm" class="upload-form">
+          <!-- 'multiple' özelliği buraya eklendi -->
           <input
             type="file"
             id="photoInput"
             name="photo"
             accept="image/*"
+            multiple
             required
           />
           <button type="submit" id="uploadButton">Yükle</button>
@@ -57,11 +59,16 @@
       </div>
       <!-- Fotoğraf Yükleme Alanı Sonu -->
 
+      <!-- Yeni düğmeler buraya eklendi -->
+      <div class="gallery-controls">
+        <button id="showPhotosOnlyButton" class="control-button">Sadece Fotoğrafları Göster</button>
+        <button id="showUploadFormButton" class="control-button" style="display: none;">Yükleme Formunu Göster</button>
+      </div>
+
       <div id="galleryGrid" class="gallery-grid">
         <!-- Görseller buraya dinamik olarak yüklenecek -->
-        <!-- Mevcut placeholder görselleri kaldırıldı, çünkü artık dinamik yüklenecekler -->
       </div>
-      <a href="#about">Hakkımızda'ya Git</a>
+      <a href="#about">Hakkımda'ya Git</a>
     </section>
 
     <section id="about" class="content-section">
@@ -81,7 +88,6 @@
 
     <footer>&copy; 2025 Amistad. Tüm hakları saklıdır.</footer>
 
-    <!-- Tüm JavaScript işlevselliği artık script.js içinde olacak -->
     <script src="script.js"></script>
   </body>
 </html>
