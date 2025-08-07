@@ -249,6 +249,36 @@ footer {
     font-weight: 600;
 }
 
+/* Yeni Galeri Kontrol Düğmeleri Stilleri */
+.gallery-controls {
+    margin-top: -2rem; /* Yükleme bölümü ile biraz üst üste gelmesi için */
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    width: 100%;
+    max-width: 600px;
+}
+
+.control-button {
+    background: #4682b4; /* Koyu soft mavi */
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.1s ease;
+    flex-grow: 1; /* Esnek büyüme */
+    max-width: 250px; /* Maksimum genişlik */
+}
+
+.control-button:hover {
+    background: #3a6a92; /* Daha koyu hover */
+    transform: translateY(-1px);
+}
+
+
 /* Responsive Düzenlemeler */
 @media (max-width: 768px) {
     header {
@@ -281,5 +311,15 @@ footer {
 
     .upload-section {
         padding: 1.5rem;
+    }
+
+    .gallery-controls {
+        flex-direction: column; /* Mobil cihazlarda dikey sıralama */
+        align-items: center;
+    }
+
+    .control-button {
+        width: 100%; /* Mobil cihazlarda tam genişlik */
+        max-width: 300px;
     }
 }
