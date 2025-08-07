@@ -23,13 +23,24 @@ exports.handler = async (event, context) => {
     }
 
     try {
-        // 'medya_galerisi_yuklemeler' klasöründeki tüm resimleri listele
-        // max_results değeri 50'den 500'e çıkarıldı (Cloudinary'nin maksimumu)
-        const result = await cloudinary.search
+        // Frontend'den gelen sorgu parametrelerini al
+        const { next_cursor, limit } = event.queryStringParameters;
+
+        // Varsayılan limit 30 olsun, maksimum 100 olarak ayarla (Cloudinary'nin tek seferde getirebileceği makul bir limit)
+        const resultsLimit = parseInt(limit) || 30;
+        const maxResults = Math.min(resultsLimit, 100); // Aşırı büyük istekleri önlemek için maksimum 100 ile sınırla
+
+        let searchBuilder = cloudinary.search
             .expression('folder:medya_galerisi_yuklemeler')
             .sort_by('public_id', 'desc') // En yeni yüklenenleri üste getir
-            .max_results(500) // Maksimum 500 sonuç getir
-            .execute();
+            .max_results(maxResults); // Belirtilen limit kadar sonuç getir
+
+        // Eğer bir sonraki imleç (next_cursor) varsa, aramayı o noktadan devam ettir
+        if (next_cursor) {
+            searchBuilder = searchBuilder.next_cursor(next_cursor);
+        }
+
+        const result = await searchBuilder.execute();
 
         const photos = result.resources.map(resource => ({
             imageUrl: resource.secure_url,
@@ -38,9 +49,15 @@ exports.handler = async (event, context) => {
             createdAt: resource.created_at
         }));
 
+        // Frontend'e gönderilecek yanıt
         return {
             statusCode: 200,
-            body: JSON.stringify({ success: true, photos }),
+            body: JSON.stringify({
+                success: true,
+                photos: photos,
+                next_cursor: result.next_cursor || null, // Bir sonraki sayfa için imleç
+                total_count: result.total_count || photos.length // Toplam fotoğraf sayısı (Cloudinary'nin total_count'u bazen tüm klasör için olmayabilir, dikkat)
+            }),
         };
 
     } catch (error) {
