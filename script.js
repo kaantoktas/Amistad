@@ -256,14 +256,45 @@ document.addEventListener("DOMContentLoaded", () => {
             const galleryItem = document.createElement("div");
             galleryItem.classList.add("gallery-item");
 
+            // İndirme linkini oluştur
+            const downloadLink = document.createElement('a');
+            downloadLink.href = photo.imageUrl;
+            downloadLink.download = photo.fileName; // İndirilecek dosya adı
+            downloadLink.classList.add('download-btn');
+            downloadLink.textContent = 'İndir';
+
+            // Programlı indirme için olay dinleyici
+            downloadLink.addEventListener('click', async (e) => {
+                e.preventDefault(); // Varsayılan link davranışını engelle
+
+                try {
+                    const imageResponse = await fetch(photo.imageUrl);
+                    const imageBlob = await imageResponse.blob();
+                    const objectUrl = URL.createObjectURL(imageBlob);
+
+                    const tempLink = document.createElement('a');
+                    tempLink.href = objectUrl;
+                    tempLink.download = photo.fileName; // İndirilecek dosya adı
+                    document.body.appendChild(tempLink);
+                    tempLink.click();
+                    document.body.removeChild(tempLink);
+                    URL.revokeObjectURL(objectUrl); // Belleği serbest bırak
+
+                } catch (error) {
+                    console.error('Fotoğraf indirilirken hata oluştu:', error);
+                    alert('Fotoğraf indirilemedi. Lütfen tekrar deneyin.'); // Kullanıcıya hata bildirimi
+                }
+            });
+
             galleryItem.innerHTML = `
                 <img src="${photo.imageUrl}" alt="${photo.fileName}" />
                 <div class="gallery-item-info">
                     <h3>${photo.fileName}</h3>
                     <p>Yüklenme Tarihi: ${new Date(photo.createdAt).toLocaleDateString()}</p>
-                    <a href="${photo.imageUrl}" download="${photo.fileName}" class="download-btn">İndir</a>
                 </div>
             `;
+            // İndirme linkini info div'ine ekle
+            galleryItem.querySelector('.gallery-item-info').appendChild(downloadLink);
             galleryGrid.appendChild(galleryItem);
           });
         }
