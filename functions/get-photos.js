@@ -26,7 +26,7 @@ exports.handler = async (event, context) => {
     // 'medya_galerisi_yuklemeler' klasöründeki tüm resimleri listele
     const result = await cloudinary.search
       .expression("folder:medya_galerisi_yuklemeler")
-     // .sort_by("public_id", "desc") // En yeni yüklenenleri üste getir
+      .sort_by("public_id", "desc") // En yeni yüklenenleri üste getir
       .max_results(50) // Maksimum 50 sonuç getir
       .execute();
 
