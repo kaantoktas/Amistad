@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ana Sayfa | Amistad</title>
+    <title>Ana Sayfa | Medya Galerisi</title>
     <link rel="stylesheet" href="style.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;600;800&display=swap"
@@ -12,11 +12,11 @@
   </head>
   <body>
     <header>
-      <div class="logo"><strong>Amistad</strong></div>
+      <div class="logo"><strong>Medya</strong> Galerisi</div>
       <nav>
         <a href="#home" class="nav-link active">Ana Sayfa</a>
         <a href="#gallery" class="nav-link">Galeri</a>
-        <a href="#about" class="nav-link">Hakkımda</a>
+        <a href="#about" class="nav-link">Hakkımızda</a>
       </nav>
     </header>
 
@@ -30,28 +30,19 @@
     </section>
 
     <section id="gallery" class="content-section">
-      <h1>Medya Galerisi</h1>
-      
+      <h1>Medya Galerimiz</h1>
+      <p>Görsel hikayelerimizi keşfedin.</p>
 
-      <!-- Fotoğraf Yükleme Alanı Başlangıcı - Buraya taşındı -->
+      <!-- Fotoğraf Yükleme Alanı Başlangıcı -->
       <div class="upload-section">
-        <h2>Fotoğraf veya Video Yükle</h2>
+        <h2>Fotoğraf Yükle</h2>
         <form id="uploadForm" class="upload-form">
-          <input
-            type="file"
-            id="photoInput"
-            name="photo"
-            accept="image/*"
-            required
-          />
+          <!-- 'multiple' özelliği buraya eklendi -->
+          <input type="file" id="photoInput" name="photo" accept="image/*" multiple required />
           <button type="submit" id="uploadButton">Yükle</button>
         </form>
         <div id="uploadMessage" class="message"></div>
-        <div
-          id="loadingIndicator"
-          class="loading-indicator"
-          style="display: none"
-        >
+        <div id="loadingIndicator" class="loading-indicator" style="display: none;">
           Yükleniyor...
         </div>
       </div>
@@ -59,16 +50,15 @@
 
       <div id="galleryGrid" class="gallery-grid">
         <!-- Görseller buraya dinamik olarak yüklenecek -->
-        <!-- Mevcut placeholder görselleri kaldırıldı, çünkü artık dinamik yüklenecekler -->
       </div>
       <a href="#about">Hakkımızda'ya Git</a>
     </section>
 
     <section id="about" class="content-section">
-      <h1>Ben Kimim?</h1>
+      <h1>Biz Kimiz?</h1>
       <p>
-        Amistad , anılarınızı en güzel şekilde saklamanız ve paylaşmanız
-        için tutkuyla çalışan bir yazılımcının ürünüdür. Amacım, kullanıcılarımıza
+        Medya Galerisi, anılarınızı en güzel şekilde saklamanız ve paylaşmanız
+        için tutkuyla çalışan bir ekibin ürünüdür. Amacımız, kullanıcılarımıza
         basit, güvenli ve estetik bir medya saklama deneyimi sunmaktır.
       </p>
       <p>
@@ -79,7 +69,7 @@
       <a href="#home">Ana Sayfaya Dön</a>
     </section>
 
-    <footer>&copy; 2025 Amistad. Tüm hakları saklıdır.</footer>
+    <footer>&copy; 2025 Medya Galerisi. Tüm hakları saklıdır.</footer>
 
     <!-- Tüm JavaScript işlevselliği artık script.js içinde olacak -->
     <script src="script.js"></script>
