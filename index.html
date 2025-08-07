@@ -34,10 +34,9 @@
       <p>Görsel hikayelerimizi keşfedin.</p>
 
       <!-- Fotoğraf Yükleme Alanı Başlangıcı -->
-      <div class="upload-section">
+      <div id="uploadSection" class="upload-section">
         <h2>Fotoğraf Yükle</h2>
         <form id="uploadForm" class="upload-form">
-          <!-- 'multiple' özelliği buraya eklendi -->
           <input type="file" id="photoInput" name="photo" accept="image/*" multiple required />
           <button type="submit" id="uploadButton">Yükle</button>
         </form>
@@ -47,6 +46,12 @@
         </div>
       </div>
       <!-- Fotoğraf Yükleme Alanı Sonu -->
+
+      <!-- Yeni düğme buraya eklendi -->
+      <div class="gallery-controls">
+        <button id="showPhotosOnlyButton" class="control-button">Sadece Fotoğrafları Göster</button>
+        <button id="showUploadFormButton" class="control-button" style="display: none;">Yükleme Formunu Göster</button>
+      </div>
 
       <div id="galleryGrid" class="gallery-grid">
         <!-- Görseller buraya dinamik olarak yüklenecek -->
@@ -71,7 +76,6 @@
 
     <footer>&copy; 2025 Medya Galerisi. Tüm hakları saklıdır.</footer>
 
-    <!-- Tüm JavaScript işlevselliği artık script.js içinde olacak -->
     <script src="script.js"></script>
   </body>
 </html>
