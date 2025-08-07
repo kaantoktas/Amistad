@@ -35,6 +35,10 @@ document.addEventListener("DOMContentLoaded", () => {
           // Eğer galeri bölümüne gidildiyse fotoğrafları yükle
           if (targetId === "#gallery") {
             fetchAndDisplayPhotos();
+            // Galeriye gidildiğinde yükleme formunu varsayılan olarak göster
+            uploadSection.style.display = 'block';
+            showPhotosOnlyButton.style.display = 'inline-block';
+            showUploadFormButton.style.display = 'none';
           }
         }, 800); // Bu süreyi kaydırma hızınıza göre ayarlayabilirsiniz
       }
@@ -69,6 +73,10 @@ document.addEventListener("DOMContentLoaded", () => {
         // Eğer galeri bölümü görünür hale gelirse fotoğrafları yükle
         if (currentSectionId === "gallery") {
           fetchAndDisplayPhotos();
+          // Galeriye scroll ile gelindiğinde yükleme formunu varsayılan olarak göster
+          uploadSection.style.display = 'block';
+          showPhotosOnlyButton.style.display = 'inline-block';
+          showUploadFormButton.style.display = 'none';
         }
       }
     });
@@ -102,6 +110,10 @@ document.addEventListener("DOMContentLoaded", () => {
       // Eğer başlangıçta galeri hash'i ile açıldıysa fotoğrafları yükle
       if (hash === "#gallery") {
         fetchAndDisplayPhotos();
+        // Galeriye hash ile gelindiğinde yükleme formunu varsayılan olarak göster
+        uploadSection.style.display = 'block';
+        showPhotosOnlyButton.style.display = 'inline-block';
+        showUploadFormButton.style.display = 'none';
       }
     } else {
       // Eğer hash yoksa Ana Sayfa'yı aktif yap ve en üste kaydır
@@ -156,6 +168,30 @@ document.addEventListener("DOMContentLoaded", () => {
   const galleryGrid = document.getElementById("galleryGrid");
   const uploadButton = document.getElementById("uploadButton");
 
+  // Yeni eklenen elementler
+  const uploadSection = document.getElementById("uploadSection");
+  const showPhotosOnlyButton = document.getElementById("showPhotosOnlyButton");
+  const showUploadFormButton = document.getElementById("showUploadFormButton");
+
+  // "Sadece Fotoğrafları Göster" düğmesine tıklama olayı
+  if (showPhotosOnlyButton) {
+    showPhotosOnlyButton.addEventListener('click', () => {
+      uploadSection.style.display = 'none'; // Yükleme bölümünü gizle
+      showPhotosOnlyButton.style.display = 'none'; // Bu butonu gizle
+      showUploadFormButton.style.display = 'inline-block'; // Diğer butonu göster
+      fetchAndDisplayPhotos(); // Fotoğrafları tekrar yükle (emin olmak için)
+    });
+  }
+
+  // "Yükleme Formunu Göster" düğmesine tıklama olayı
+  if (showUploadFormButton) {
+    showUploadFormButton.addEventListener('click', () => {
+      uploadSection.style.display = 'block'; // Yükleme bölümünü göster
+      showPhotosOnlyButton.style.display = 'inline-block'; // Diğer butonu göster
+      showUploadFormButton.style.display = 'none'; // Bu butonu gizle
+    });
+  }
+
   // Fotoğraf yükleme formunu dinle
   if (uploadForm) {
     uploadForm.addEventListener("submit", async (e) => {
@@ -163,74 +199,89 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Dosya seçili mi kontrol et
       if (!photoInput.files || photoInput.files.length === 0) {
-        uploadMessage.textContent = "Lütfen yüklemek için bir fotoğraf seçin.";
+        uploadMessage.textContent = "Lütfen yüklemek için bir veya daha fazla fotoğraf seçin.";
         uploadMessage.style.color = "red";
         return;
       }
 
-      const file = photoInput.files[0];
+      const files = Array.from(photoInput.files); // Seçilen tüm dosyaları diziye dönüştür
+      let uploadedCount = 0;
+      let failedCount = 0;
 
-      // Dosyayı Base64'e dönüştür
-      const reader = new FileReader();
-      reader.readAsDataURL(file); // Dosyayı Base64 string olarak oku
+      // Yükleme durumunu göster
+      uploadMessage.textContent = "";
+      loadingIndicator.style.display = "block";
+      uploadButton.disabled = true; // Yükleme sırasında butonu devre dışı bırak
+      photoInput.disabled = true; // Yükleme sırasında input'u devre dışı bırak
 
-      reader.onloadstart = () => {
-        uploadMessage.textContent = "";
-        loadingIndicator.style.display = "block";
-        uploadButton.disabled = true;
-        photoInput.disabled = true;
-      };
+      // Her bir dosyayı ayrı ayrı yükle
+      // Promise.allSettled kullanarak tüm yüklemelerin tamamlanmasını bekle, hataları da yakala
+      const uploadPromises = files.map(file => {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file); // Dosyayı Base64 string olarak oku
 
-      reader.onload = async () => {
-        const photoData = reader.result; // Base64 kodlu veri
-        const fileName = file.name; // Dosya adı
+          reader.onload = async () => {
+            const photoData = reader.result; // Base64 kodlu veri
+            const fileName = file.name; // Dosya adı
 
-        try {
-          // Netlify Fonksiyonuna POST isteği gönder
-          // netlify.toml'daki redirect sayesinde /api/upload -> /.netlify/functions/upload olacak
-          const response = await fetch("/api/upload", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json", // Base64 verisi JSON olarak gönderiliyor
-            },
-            body: JSON.stringify({ photoData, fileName }), // Base64 verisini ve dosya adını JSON olarak gönder
-          });
+            try {
+              const response = await fetch("/api/upload", {
+                method: "POST",
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ photoData, fileName }),
+              });
 
-          const data = await response.json();
+              const data = await response.json();
 
-          if (response.ok && data.success) {
-            uploadMessage.textContent = data.message;
-            uploadMessage.style.color = "green";
-            // Yükleme başarılı olduktan sonra galeriyi yeniden yükle
-            fetchAndDisplayPhotos();
-            // Formu sıfırla
-            uploadForm.reset();
-          } else {
-            uploadMessage.textContent = `Hata: ${
-              data.message || "Bilinmeyen bir hata oluştu."
-            }`;
-            uploadMessage.style.color = "red";
-          }
-        } catch (error) {
-          console.error("Yükleme sırasında hata oluştu:", error);
-          uploadMessage.textContent = "Yükleme sırasında bir ağ hatası oluştu.";
-          uploadMessage.style.color = "red";
-        } finally {
-          // Yükleme bittiğinde durumu sıfırla
-          loadingIndicator.style.display = "none";
-          uploadButton.disabled = false;
-          photoInput.disabled = false;
-        }
-      };
+              if (response.ok && data.success) {
+                uploadedCount++;
+                console.log(`'${fileName}' başarıyla yüklendi.`);
+              } else {
+                failedCount++;
+                console.error(`'${fileName}' yüklenirken hata: ${data.message || 'Bilinmeyen hata'}`);
+              }
+            } catch (error) {
+              failedCount++;
+              console.error(`'${fileName}' yüklenirken ağ hatası:`, error);
+            } finally {
+              resolve(); // Promise'ı çöz, bir sonraki dosyaya geç
+            }
+          };
 
-      reader.onerror = (error) => {
-        console.error("Dosya okuma hatası:", error);
-        uploadMessage.textContent = "Dosya okunurken bir hata oluştu.";
+          reader.onerror = (error) => {
+            failedCount++;
+            console.error(`'${file.name}' okunurken hata:`, error);
+            resolve(); // Promise'ı çöz, bir sonraki dosyaya geç
+          };
+        });
+      });
+
+      // Tüm yüklemelerin tamamlanmasını bekle
+      await Promise.allSettled(uploadPromises);
+
+      // Tüm yüklemeler bittikten sonra genel mesajı göster
+      if (uploadedCount > 0 && failedCount === 0) {
+        uploadMessage.textContent = `${uploadedCount} fotoğraf başarıyla yüklendi!`;
+        uploadMessage.style.color = "green";
+      } else if (uploadedCount > 0 && failedCount > 0) {
+        uploadMessage.textContent = `${uploadedCount} fotoğraf yüklendi, ${failedCount} fotoğraf yüklenemedi. Detaylar için konsolu kontrol edin.`;
+        uploadMessage.style.color = "orange";
+      } else {
+        uploadMessage.textContent = `Hiç fotoğraf yüklenemedi. Detaylar için konsolu kontrol edin.`;
         uploadMessage.style.color = "red";
-        loadingIndicator.style.display = "none";
-        uploadButton.disabled = false;
-        photoInput.disabled = false;
-      };
+      }
+
+      // Galeriyi yeniden yükle ve formu sıfırla
+      fetchAndDisplayPhotos();
+      uploadForm.reset();
+
+      // Yükleme bittiğinde durumu sıfırla
+      loadingIndicator.style.display = "none";
+      uploadButton.disabled = false;
+      photoInput.disabled = false;
     });
   }
 
@@ -244,7 +295,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       // Netlify Fonksiyonundan fotoğrafları çekme
-      // netlify.toml'daki redirect sayesinde /api/get-photos -> /.netlify/functions/get-photos olacak
       const response = await fetch("/api/get-photos");
       const data = await response.json();
 
@@ -256,18 +306,45 @@ document.addEventListener("DOMContentLoaded", () => {
             const galleryItem = document.createElement("div");
             galleryItem.classList.add("gallery-item");
 
+            // İndirme linkini oluştur
+            const downloadLink = document.createElement('a');
+            downloadLink.href = photo.imageUrl;
+            downloadLink.download = photo.fileName; // İndirilecek dosya adı
+            downloadLink.classList.add('download-btn');
+            downloadLink.textContent = 'İndir';
+
+            // Programlı indirme için olay dinleyici
+            downloadLink.addEventListener('click', async (e) => {
+                e.preventDefault(); // Varsayılan link davranışını engelle
+
+                try {
+                    const imageResponse = await fetch(photo.imageUrl);
+                    const imageBlob = await imageResponse.blob();
+                    const objectUrl = URL.createObjectURL(imageBlob);
+
+                    const tempLink = document.createElement('a');
+                    tempLink.href = objectUrl;
+                    tempLink.download = photo.fileName; // İndirilecek dosya adı
+                    document.body.appendChild(tempLink);
+                    tempLink.click();
+                    document.body.removeChild(tempLink);
+                    URL.revokeObjectURL(objectUrl); // Belleği serbest bırak
+
+                } catch (error) {
+                    console.error('Fotoğraf indirilirken hata oluştu:', error);
+                    alert('Fotoğraf indirilemedi. Lütfen tekrar deneyin.'); // Kullanıcıya hata bildirimi
+                }
+            });
+
             galleryItem.innerHTML = `
                 <img src="${photo.imageUrl}" alt="${photo.fileName}" />
                 <div class="gallery-item-info">
                     <h3>${photo.fileName}</h3>
-                    <p>Yüklenme Tarihi: ${new Date(
-                      photo.createdAt
-                    ).toLocaleDateString()}</p>
-                    <a href="${photo.imageUrl}" download="${
-              photo.fileName
-            }" class="download-btn">İndir</a>
+                    <p>Yüklenme Tarihi: ${new Date(photo.createdAt).toLocaleDateString()}</p>
                 </div>
             `;
+            // İndirme linkini info div'ine ekle
+            galleryItem.querySelector('.gallery-item-info').appendChild(downloadLink);
             galleryGrid.appendChild(galleryItem);
           });
         }
