@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
           isScrollingFromNav = false; // Kaydırma bittiğini işaretle
 
           // Eğer galeri bölümüne gidildiyse fotoğrafları yükle
-          if (targetId === "#gallery") {
+          if (targetId === '#gallery') {
             fetchAndDisplayPhotos();
           }
         }, 800); // Bu süreyi kaydırma hızınıza göre ayarlayabilirsiniz
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // Eğer galeri bölümü görünür hale gelirse fotoğrafları yükle
-        if (currentSectionId === "gallery") {
+        if (currentSectionId === 'gallery') {
           fetchAndDisplayPhotos();
         }
       }
@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
       // Eğer başlangıçta galeri hash'i ile açıldıysa fotoğrafları yükle
-      if (hash === "#gallery") {
+      if (hash === '#gallery') {
         fetchAndDisplayPhotos();
       }
     } else {
@@ -175,8 +175,8 @@ document.addEventListener("DOMContentLoaded", () => {
       reader.readAsDataURL(file); // Dosyayı Base64 string olarak oku
 
       reader.onloadstart = () => {
-        uploadMessage.textContent = "";
-        loadingIndicator.style.display = "block";
+        uploadMessage.textContent = '';
+        loadingIndicator.style.display = 'block';
         uploadButton.disabled = true;
         photoInput.disabled = true;
       };
@@ -191,7 +191,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const response = await fetch("/api/upload", {
             method: "POST",
             headers: {
-              "Content-Type": "application/json", // Base64 verisi JSON olarak gönderiliyor
+              'Content-Type': 'application/json' // Base64 verisi JSON olarak gönderiliyor
             },
             body: JSON.stringify({ photoData, fileName }), // Base64 verisini ve dosya adını JSON olarak gönder
           });
@@ -236,7 +236,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Cloudinary'den fotoğrafları çekip galeride gösterme fonksiyonu
   async function fetchAndDisplayPhotos() {
-    const gallerySection = document.getElementById("gallery");
+    const gallerySection = document.getElementById('gallery');
     if (!gallerySection) return;
 
     galleryGrid.innerHTML = ""; // Mevcut görselleri temizle
@@ -260,9 +260,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 <img src="${photo.imageUrl}" alt="${photo.fileName}" />
                 <div class="gallery-item-info">
                     <h3>${photo.fileName}</h3>
-                    <p>Yüklenme Tarihi: ${new Date(
-                      photo.createdAt
-                    ).toLocaleDateString()}</p>
+                    <p>Yüklenme Tarihi: ${new Date(photo.createdAt).toLocaleDateString()}</p>
+                    <a href="${photo.imageUrl}" download="${photo.fileName}" class="download-btn">İndir</a>
                 </div>
             `;
             galleryGrid.appendChild(galleryItem);
