@@ -24,10 +24,11 @@ exports.handler = async (event, context) => {
 
   try {
     // 'medya_galerisi_yuklemeler' klasöründeki tüm resimleri listele
+    // max_results değeri 50'den 500'e çıkarıldı (Cloudinary'nin tek seferde getirebileceği maksimum)
     const result = await cloudinary.search
       .expression("folder:medya_galerisi_yuklemeler")
       .sort_by("public_id", "desc") // En yeni yüklenenleri üste getir
-      .max_results(50) // Maksimum 50 sonuç getir
+      .max_results(500) // Maksimum 500 sonuç getir
       .execute();
 
     const photos = result.resources.map((resource) => ({
