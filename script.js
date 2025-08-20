@@ -1,67 +1,54 @@
-// script.js
-
 document.addEventListener("DOMContentLoaded", () => {
   const navLinks = document.querySelectorAll("nav .nav-link");
   const sections = document.querySelectorAll(".content-section");
   const header = document.querySelector("header");
-  const body = document.body; // body elementini yakala
+  const body = document.body; 
 
-  let isScrollingFromNav = false; // Navigasyondan kaydırma yapılıp yapılmadığını takip eden flag
+  let isScrollingFromNav = false; 
 
-  // Smooth scroll for navigation links
   navLinks.forEach((link) => {
     link.addEventListener("click", (e) => {
-      e.preventDefault(); // Varsayılan link davranışını engelle
+      e.preventDefault(); 
 
-      isScrollingFromNav = true; // Navigasyondan kaydırma başladığını işaretle
-      body.style.scrollSnapType = "none"; // Geçici olarak scroll-snap'i devre dışı bırak
+      isScrollingFromNav = true; 
+      body.style.scrollSnapType = "none"; 
 
-      const targetId = e.target.getAttribute("href"); // Linkin hedef ID'sini al (örn: "#gallery")
-      const targetSection = document.querySelector(targetId); // Hedef bölümü seç
+      const targetId = e.target.getAttribute("href"); 
+      const targetSection = document.querySelector(targetId); 
 
       if (targetSection) {
         const headerHeight = header.offsetHeight;
         window.scrollTo({
           top: targetSection.offsetTop - headerHeight,
-          behavior: "smooth", // Yumuşak kaydırma efekti
+          behavior: "smooth", 
         });
-
-        // Kaydırma bittikten sonra scroll-snap'i tekrar etkinleştir
-        // Genellikle kaydırma süresi 500-800ms civarında olur, biraz pay bırakalım
         setTimeout(() => {
-          body.style.scrollSnapType = "y mandatory"; // Scroll-snap'i geri getir
-          isScrollingFromNav = false; // Kaydırma bittiğini işaretle
+          body.style.scrollSnapType = "y mandatory"; 
+          isScrollingFromNav = false; 
 
-          // Eğer galeri bölümüne gidildiyse fotoğrafları yükle
+        
           if (targetId === "#gallery") {
             fetchAndDisplayPhotos();
-            // Galeriye gidildiğinde yükleme formunu varsayılan olarak göster
             uploadSection.style.display = 'block';
             showPhotosOnlyButton.style.display = 'inline-block';
             showUploadFormButton.style.display = 'none';
           }
-        }, 800); // Bu süreyi kaydırma hızınıza göre ayarlayabilirsiniz
+        }, 800); 
       }
-
-      // Tüm linklerden 'active' sınıfını kaldır
       navLinks.forEach((l) => l.classList.remove("active"));
-      // Tıklanan linke 'active' sınıfını ekle
       e.target.classList.add("active");
     });
   });
 
-  // Intersection Observer for highlighting active link on scroll
-  // Header'ın yüksekliğini dikkate alarak görünürlük kontrolü yapar
   const observerOptions = {
-    root: null, // viewport'u kök olarak kullan
-    rootMargin: `-${header.offsetHeight}px 0px -50% 0px`, // Header'ın kapladığı alanı düş
-    threshold: 0, // Eşiği 0 yapın, yani elementin bir kısmı görünür olduğunda tetiklensin
+    root: null, 
+    rootMargin: `-${header.offsetHeight}px 0px -50% 0px`, 
+    threshold: 0, 
   };
 
   const sectionObserver = new IntersectionObserver((entries, observer) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting && !isScrollingFromNav) {
-        // Eğer navigasyondan kaydırma yapılmıyorsa
         const currentSectionId = entry.target.id;
         navLinks.forEach((link) => {
           link.classList.remove("active");
@@ -69,11 +56,8 @@ document.addEventListener("DOMContentLoaded", () => {
             link.classList.add("active");
           }
         });
-
-        // Eğer galeri bölümü görünür hale gelirse fotoğrafları yükle
         if (currentSectionId === "gallery") {
           fetchAndDisplayPhotos();
-          // Galeriye scroll ile gelindiğinde yükleme formunu varsayılan olarak göster
           uploadSection.style.display = 'block';
           showPhotosOnlyButton.style.display = 'inline-block';
           showUploadFormButton.style.display = 'none';
@@ -86,11 +70,9 @@ document.addEventListener("DOMContentLoaded", () => {
     sectionObserver.observe(section);
   });
 
-  // Sayfa yüklendiğinde ve URL'de hash varsa doğru aktif linki belirle
   const initialActiveLink = () => {
     const hash = window.location.hash;
     if (hash) {
-      // Eğer hash varsa ve navigasyondan geliyorsak zaten ele alınmıştır, burada sadece vurgula
       navLinks.forEach((link) => {
         if (link.getAttribute("href") === hash) {
           link.classList.add("active");
@@ -98,7 +80,6 @@ document.addEventListener("DOMContentLoaded", () => {
           link.classList.remove("active");
         }
       });
-      // Sayfa başlangıçta hash ile açılırsa da kaydırma efekti ver
       const targetSection = document.querySelector(hash);
       if (targetSection) {
         const headerHeight = header.offsetHeight;
@@ -107,16 +88,13 @@ document.addEventListener("DOMContentLoaded", () => {
           behavior: "smooth",
         });
       }
-      // Eğer başlangıçta galeri hash'i ile açıldıysa fotoğrafları yükle
       if (hash === "#gallery") {
         fetchAndDisplayPhotos();
-        // Galeriye hash ile gelindiğinde yükleme formunu varsayılan olarak göster
         uploadSection.style.display = 'block';
         showPhotosOnlyButton.style.display = 'inline-block';
         showUploadFormButton.style.display = 'none';
       }
     } else {
-      // Eğer hash yoksa Ana Sayfa'yı aktif yap ve en üste kaydır
       document
         .querySelector('nav .nav-link[href="#home"]')
         .classList.add("active");
@@ -126,14 +104,11 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
   };
-
-  // İlk yüklemede ve sayfa yüklendiğinde çalıştır
   initialActiveLink();
   window.addEventListener("load", initialActiveLink);
 
-  // Scroll anında aktif linki kontrol et (daha dinamik bir deneyim için)
   window.addEventListener("scroll", () => {
-    if (isScrollingFromNav) return; // Navigasyondan kaydırma yapılıyorsa bu kısmı atla
+    if (isScrollingFromNav) return; 
 
     let current = "";
     const headerHeight = header.offsetHeight;
@@ -156,11 +131,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
-
-  // ******************************************************
-  // GALERİ YÜKLEME VE GÖRÜNTÜLEME İŞLEVSELLİĞİ BURAYA EKLENDİ
-  // ******************************************************
-
   const uploadForm = document.getElementById("uploadForm");
   const photoInput = document.getElementById("photoInput");
   const uploadMessage = document.getElementById("uploadMessage");
@@ -168,62 +138,56 @@ document.addEventListener("DOMContentLoaded", () => {
   const galleryGrid = document.getElementById("galleryGrid");
   const uploadButton = document.getElementById("uploadButton");
 
-  // Yeni eklenen elementler
   const uploadSection = document.getElementById("uploadSection");
   const showPhotosOnlyButton = document.getElementById("showPhotosOnlyButton");
   const showUploadFormButton = document.getElementById("showUploadFormButton");
 
-  // "Sadece Fotoğrafları Göster" düğmesine tıklama olayı
   if (showPhotosOnlyButton) {
     showPhotosOnlyButton.addEventListener('click', () => {
-      uploadSection.style.display = 'none'; // Yükleme bölümünü gizle
-      showPhotosOnlyButton.style.display = 'none'; // Bu butonu gizle
-      showUploadFormButton.style.display = 'inline-block'; // Diğer butonu göster
-      fetchAndDisplayPhotos(); // Fotoğrafları tekrar yükle (emin olmak için)
+      uploadSection.style.display = 'none'; 
+      showPhotosOnlyButton.style.display = 'none'; 
+      showUploadFormButton.style.display = 'inline-block'; 
+      fetchAndDisplayPhotos();
     });
   }
 
-  // "Yükleme Formunu Göster" düğmesine tıklama olayı
   if (showUploadFormButton) {
     showUploadFormButton.addEventListener('click', () => {
-      uploadSection.style.display = 'block'; // Yükleme bölümünü göster
-      showPhotosOnlyButton.style.display = 'inline-block'; // Diğer butonu göster
-      showUploadFormButton.style.display = 'none'; // Bu butonu gizle
+      uploadSection.style.display = 'block'; 
+      showPhotosOnlyButton.style.display = 'inline-block'; 
+      showUploadFormButton.style.display = 'none'; 
     });
   }
 
-  // Fotoğraf yükleme formunu dinle
   if (uploadForm) {
     uploadForm.addEventListener("submit", async (e) => {
-      e.preventDefault(); // Varsayılan form gönderme davranışını engelle
+      e.preventDefault(); 
 
-      // Dosya seçili mi kontrol et
       if (!photoInput.files || photoInput.files.length === 0) {
         uploadMessage.textContent = "Lütfen yüklemek için bir veya daha fazla fotoğraf seçin.";
         uploadMessage.style.color = "red";
         return;
       }
 
-      const files = Array.from(photoInput.files); // Seçilen tüm dosyaları diziye dönüştür
+      const files = Array.from(photoInput.files); 
       let uploadedCount = 0;
       let failedCount = 0;
 
-      // Yükleme durumunu göster
+     
       uploadMessage.textContent = "";
       loadingIndicator.style.display = "block";
-      uploadButton.disabled = true; // Yükleme sırasında butonu devre dışı bırak
-      photoInput.disabled = true; // Yükleme sırasında input'u devre dışı bırak
+      uploadButton.disabled = true; 
+      photoInput.disabled = true; 
 
-      // Her bir dosyayı ayrı ayrı yükle
-      // Promise.allSettled kullanarak tüm yüklemelerin tamamlanmasını bekle, hataları da yakala
+
       const uploadPromises = files.map(file => {
         return new Promise((resolve) => {
           const reader = new FileReader();
-          reader.readAsDataURL(file); // Dosyayı Base64 string olarak oku
+          reader.readAsDataURL(file); 
 
           reader.onload = async () => {
-            const photoData = reader.result; // Base64 kodlu veri
-            const fileName = file.name; // Dosya adı
+            const photoData = reader.result;
+            const fileName = file.name; 
 
             try {
               const response = await fetch("/api/upload", {
@@ -247,22 +211,20 @@ document.addEventListener("DOMContentLoaded", () => {
               failedCount++;
               console.error(`'${fileName}' yüklenirken ağ hatası:`, error);
             } finally {
-              resolve(); // Promise'ı çöz, bir sonraki dosyaya geç
+              resolve(); 
             }
           };
 
           reader.onerror = (error) => {
             failedCount++;
             console.error(`'${file.name}' okunurken hata:`, error);
-            resolve(); // Promise'ı çöz, bir sonraki dosyaya geç
+            resolve(); 
           };
         });
       });
 
-      // Tüm yüklemelerin tamamlanmasını bekle
       await Promise.allSettled(uploadPromises);
 
-      // Tüm yüklemeler bittikten sonra genel mesajı göster
       if (uploadedCount > 0 && failedCount === 0) {
         uploadMessage.textContent = `${uploadedCount} fotoğraf başarıyla yüklendi!`;
         uploadMessage.style.color = "green";
@@ -274,27 +236,24 @@ document.addEventListener("DOMContentLoaded", () => {
         uploadMessage.style.color = "red";
       }
 
-      // Galeriyi yeniden yükle ve formu sıfırla
       fetchAndDisplayPhotos();
       uploadForm.reset();
 
-      // Yükleme bittiğinde durumu sıfırla
       loadingIndicator.style.display = "none";
       uploadButton.disabled = false;
       photoInput.disabled = false;
     });
   }
 
-  // Cloudinary'den fotoğrafları çekip galeride gösterme fonksiyonu
   async function fetchAndDisplayPhotos() {
     const gallerySection = document.getElementById("gallery");
     if (!gallerySection) return;
 
-    galleryGrid.innerHTML = ""; // Mevcut görselleri temizle
-    loadingIndicator.style.display = "block"; // Yükleniyor göstergesini aç
+    galleryGrid.innerHTML = ""; 
+    loadingIndicator.style.display = "block"; 
 
     try {
-      // Netlify Fonksiyonundan fotoğrafları çekme
+     
       const response = await fetch("/api/get-photos");
       const data = await response.json();
 
@@ -306,16 +265,14 @@ document.addEventListener("DOMContentLoaded", () => {
             const galleryItem = document.createElement("div");
             galleryItem.classList.add("gallery-item");
 
-            // İndirme linkini oluştur
             const downloadLink = document.createElement('a');
             downloadLink.href = photo.imageUrl;
-            downloadLink.download = photo.fileName; // İndirilecek dosya adı
+            downloadLink.download = photo.fileName; 
             downloadLink.classList.add('download-btn');
             downloadLink.textContent = 'İndir';
 
-            // Programlı indirme için olay dinleyici
             downloadLink.addEventListener('click', async (e) => {
-                e.preventDefault(); // Varsayılan link davranışını engelle
+                e.preventDefault(); 
 
                 try {
                     const imageResponse = await fetch(photo.imageUrl);
@@ -324,15 +281,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     const tempLink = document.createElement('a');
                     tempLink.href = objectUrl;
-                    tempLink.download = photo.fileName; // İndirilecek dosya adı
+                    tempLink.download = photo.fileName; 
                     document.body.appendChild(tempLink);
                     tempLink.click();
                     document.body.removeChild(tempLink);
-                    URL.revokeObjectURL(objectUrl); // Belleği serbest bırak
+                    URL.revokeObjectURL(objectUrl);
 
                 } catch (error) {
                     console.error('Fotoğraf indirilirken hata oluştu:', error);
-                    alert('Fotoğraf indirilemedi. Lütfen tekrar deneyin.'); // Kullanıcıya hata bildirimi
+                    alert('Fotoğraf indirilemedi. Lütfen tekrar deneyin.'); 
                 }
             });
 
@@ -343,7 +300,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p>Yüklenme Tarihi: ${new Date(photo.createdAt).toLocaleDateString()}</p>
                 </div>
             `;
-            // İndirme linkini info div'ine ekle
             galleryItem.querySelector('.gallery-item-info').appendChild(downloadLink);
             galleryGrid.appendChild(galleryItem);
           });
@@ -357,11 +313,9 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Fotoğraf çekme sırasında hata oluştu:", error);
       galleryGrid.innerHTML = `<p style="color: red;">Fotoğraflar yüklenirken bir ağ hatası oluştu.</p>`;
     } finally {
-      loadingIndicator.style.display = "none"; // Yükleniyor göstergesini kapat
+      loadingIndicator.style.display = "none";
     }
   }
 
-  // Sayfa yüklendiğinde ve eğer galeri bölümü başlangıçta görünürse veya hash ile gelindiyse fotoğrafları çek ve göster
-  // Bu çağrı, initialActiveLink veya IntersectionObserver tarafından da tetiklenebilir.
-  // Bu yüzden burada doğrudan çağrıyı kaldırdık ve sadece ilgili olaylarda tetiklenmesini sağladık.
+
 });
