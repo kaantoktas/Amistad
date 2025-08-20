@@ -1,20 +1,15 @@
-// functions/get-photos.js
 const cloudinary = require("cloudinary").v2;
 const dotenv = require("dotenv");
 
-// Ortam değişkenlerini yükle (Netlify'de otomatik olarak sağlanır, ancak yerel test için gerekli olabilir)
 dotenv.config();
 
-// Cloudinary yapılandırması
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Netlify Function handler'ı
 exports.handler = async (event, context) => {
-  // Sadece GET isteklerini kabul et
   if (event.httpMethod !== "GET") {
     return {
       statusCode: 405,
@@ -23,12 +18,10 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // 'medya_galerisi_yuklemeler' klasöründeki tüm resimleri listele
-    // max_results değeri 50'den 500'e çıkarıldı (Cloudinary'nin tek seferde getirebileceği maksimum)
     const result = await cloudinary.search
       .expression("folder:medya_galerisi_yuklemeler")
-      .sort_by("public_id", "desc") // En yeni yüklenenleri üste getir
-      .max_results(500) // Maksimum 500 sonuç getir
+      .sort_by("public_id", "desc") 
+      .max_results(500) 
       .execute();
 
     const photos = result.resources.map((resource) => ({
